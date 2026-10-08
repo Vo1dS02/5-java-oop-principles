@@ -1,50 +1,56 @@
 package com.example.task04;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-public class RotationFileHandler implements MessageHandler {
-    private final String baseName;
-    private final ChronoUnit rotationUnit;
+public class RotationFileHandler extends FileHandler {
+    private String basePath;
+    private ChronoUnit rotationUnit;
+    private LocalDateTime lastRotation;
+    private static final DateTimeFormatter nameFormat =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
-    private LocalDateTime nextRotationTime;
-    private String currentFilePath;
-
-    public RotationFileHandler(String baseName, ChronoUnit rotationUnit) {
-        this.baseName = baseName;
-        this.rotationUnit = rotationUnit;
-        updateRotationPath(LocalDateTime.now());
+    public static String buildName(String basePath) {
+        LocalDateTime now = LocalDateTime.now();
+        return basePath + "-" + now.format(nameFormat) + ".txt";
     }
 
-    private void updateRotationPath(LocalDateTime now) {
-        // Форматируем хвост файла в зависимости от ротации
-        String formatPattern = switch (rotationUnit) {
-            case HOURS -> "yyyy-MM-dd_HH";
-            case DAYS -> "yyyy-MM-dd";
-            case MONTHS -> "yyyy-MM";
-            default -> "yyyy-MM-dd_HH-mm-ss"; // дефолтный паттерн для мелких интервалов
-        };
+    public RotationFileHandler(String basePath, ChronoUnit rotationUnit) throws IOException {
+        super(Path.of(buildName(basePath)));
+        this.basePath = basePath;
+        this.lastRotation = LocalDateTime.now();
+        this.rotationUnit = rotationUnit;
+    }
 
-        String suffix = now.format(DateTimeFormatter.ofPattern(formatPattern));
-        this.currentFilePath = baseName + "_" + suffix + ".log";
-        this.nextRotationTime = now.truncatedTo(rotationUnit).plus(1, rotationUnit);
+    private boolean shouldRotate() {
+        LocalDateTime now = LocalDateTime.now();
+        if (rotationUnit == null) {
+            return false;
+        }
+        long diff = rotationUnit.between(lastRotation, now);
+        return diff >= 1;
+    }
+
+    public void rotate() {
+        try {
+            close();
+        } catch (IOException e) {
+            System.err.println("Не удалось закрыть файл: " + e.getMessage());
+        }
+        String newName = buildName(basePath);
+        open(Path.of(newName));
+        lastRotation = LocalDateTime.now();
     }
 
     @Override
-    public void handle(Level level, String timestamp, String loggerName, String message) {
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isAfter(nextRotationTime) || now.isEqual(nextRotationTime)) {
-            updateRotationPath(now);
+    public void handle(String message) {
+        if (shouldRotate()) {
+            rotate();
         }
+        super.handle(message);
 
-        try (PrintWriter writer = new PrintWriter(new FileWriter(currentFilePath, true))) {
-            writer.printf("[%s] %s %s - %s%n", level.name(), timestamp, loggerName, message);
-        } catch (IOException e) {
-            System.err.println("Ошибка ротации файла: " + e.getMessage());
-        }
     }
 }

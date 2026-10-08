@@ -1,33 +1,9 @@
 package com.example.task03;
 
-/**
- * Интервал в минутах
- */
-public class Minutes implements TimeUnit {
-
-    private final long amount;
+public class Minutes extends AbstractTimeUnit {
 
     public Minutes(long amount) {
-        this.amount = amount;
+        super(amount, 60000);
     }
 
-    @Override
-    public long toMillis() {
-        return amount * 60 * 1000;
-    }
-
-    @Override
-    public long toSeconds() {
-        return amount * 60;
-    }
-
-    @Override
-    public long toMinutes() {
-        return amount;
-    }
-
-    @Override
-    public long getHours() { // Изменено по требованию тестов
-        return Math.round((double) amount / 60);
-    }
 }

@@ -4,52 +4,39 @@ package com.example.task03;
  * Класс, в котором собраны методы для работы с {@link TimeUnit}
  */
 public class TimeUnitUtils {
-
-    public static Milliseconds toMillis(Seconds seconds) {
-        return new Milliseconds(seconds.toMillis());
+    /**
+     * Конвертирует интервал в секундах в интервал в миллисекундах
+     *
+     * @param seconds интервал в секундах
+     * @return интервал в миллисекундах
+     */
+    public static Milliseconds getMilliseconds(Seconds seconds) {
+        return new Milliseconds(seconds.getMilliseconds());
     }
 
-    public static Milliseconds toMillis(Minutes minutes) {
-        return new Milliseconds(minutes.toMillis());
+    /**
+     * Конвертирует интервал в миллисекундах в интервал в секундах
+     *
+     * @param millis интервал в миллисекундах
+     * @return интервал в секундах
+     */
+    public static Seconds getSeconds(Milliseconds milliseconds) {
+        return new Seconds(milliseconds.getSeconds());
     }
 
-    public static Milliseconds toMillis(Hours hours) {
-        return new Milliseconds(hours.toMillis());
+    public static Hours getHours(Seconds seconds) {
+        return new Hours(seconds.getHours());
     }
 
-    public static Seconds toSeconds(Milliseconds millis) {
-        return new Seconds(millis.toSeconds());
+    public static Hours getHours(Milliseconds milliseconds) {
+        return new Hours(milliseconds.getHours());
     }
 
-    public static Seconds toSeconds(Minutes minutes) {
-        return new Seconds(minutes.toSeconds());
+    public static Seconds getSeconds(Hours hours) {
+        return new Seconds(hours.getSeconds());
     }
 
-    public static Seconds toSeconds(Hours hours) {
-        return new Seconds(hours.toSeconds());
-    }
-
-    public static Minutes toMinutes(Milliseconds millis) {
-        return new Minutes(millis.toMinutes());
-    }
-
-    public static Minutes toMinutes(Seconds seconds) {
-        return new Minutes(seconds.toMinutes());
-    }
-
-    public static Minutes toMinutes(Hours hours) {
-        return new Minutes(hours.toMinutes());
-    }
-
-    public static Hours toHours(Milliseconds millis) {
-        return new Hours(millis.getHours()); // Изменено
-    }
-
-    public static Hours toHours(Seconds seconds) {
-        return new Hours(seconds.getHours()); // Изменено
-    }
-
-    public static Hours toHours(Minutes minutes) {
-        return new Hours(minutes.getHours()); // Изменено
+    public static Milliseconds getMilliseconds(Hours hours) {
+        return new Milliseconds(hours.getMilliseconds());
     }
 }

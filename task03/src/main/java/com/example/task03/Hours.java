@@ -1,33 +1,7 @@
 package com.example.task03;
 
-/**
- * Интервал в часах
- */
-public class Hours implements TimeUnit {
-
-    private final long amount;
-
+public class Hours extends AbstractTimeUnit {
     public Hours(long amount) {
-        this.amount = amount;
-    }
-
-    @Override
-    public long toMillis() {
-        return amount * 3600 * 1000;
-    }
-
-    @Override
-    public long toSeconds() {
-        return amount * 3600;
-    }
-
-    @Override
-    public long toMinutes() {
-        return amount * 60;
-    }
-
-    @Override
-    public long getHours() { // Изменено по требованию тестов
-        return amount;
+        super(amount, 3600000);
     }
 }

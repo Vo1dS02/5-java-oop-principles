@@ -1,31 +1,31 @@
 package com.example.task02;
 
-/**
- * Счет к оплате со скидкой.
- * Скидка задается в процентах.
- */
 public class DiscountBill extends Bill {
-
-    private final int discount; // скидка в процентах
+    private int discount;
 
     public DiscountBill(int discount) {
         this.discount = discount;
     }
 
-
-    public int getDiscount() {
-        return discount;
+    @Override
+    public long getPrice() {
+        long full = super.getPrice();
+        full = (long) (full - (full * discount / 100.0));
+        return full;
+        /*
+        Также должен быть метод получения размера скидки (в процентах) и
+        абсолютного значения скидки (разница между суммой и суммой со скидкой).
+         */
     }
-
 
     public int getDiscountPercent() {
         return discount;
     }
 
-    public long getDiscountAmount() {
-        return super.getPrice() * discount / 100;
+    public long getAbsDiscount() {
+        long result = super.getPrice() - getPrice();
+        return result;
     }
-
 
 
 }
